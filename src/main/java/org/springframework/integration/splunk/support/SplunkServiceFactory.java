@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.DatatypeConverter;
 
-import com.splunk.Service;
+import com.splunk.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -70,6 +70,7 @@ public class SplunkServiceFactory implements ServiceFactory {
 	}
 
 	private Service getServiceInternal() {
+    HttpService.setSslSecurityProtocol(SSLSecurityProtocol.TLSv1_2);
 
 		for (SplunkServer splunkServer : splunkServers) {
 			Service service = servicePerServer.get(splunkServer);

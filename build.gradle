@@ -54,7 +54,7 @@ configurations {
 }
 
 dependencies {
-	compile "com.splunk:splunk:$splunkVersion"
+	//compile "com.splunk:splunk:$splunkVersion"
 	compile "org.springframework.integration:spring-integration-core:$springIntegrationVersion"
 	compile "joda-time:joda-time:$jodaTimeVersion"
 	compile "commons-pool:commons-pool:$commonsPoolVersion"
@@ -66,6 +66,8 @@ dependencies {
 	compile "org.apache.httpcomponents:httpclient-cache:$commonsHTTPClientCacheVersion"
 	compile "org.apache.httpcomponents:httpcore:$commonsHTTPCoreVersion"
 	compile "org.apache.httpcomponents:httpcore-nio:$commonsHTTPCoreNIOVersion"
+  compile 'com.google.code.gson:gson:2.6.2'
+  compile fileTree(dir: 'libs', include: '*.jar')
 	testCompile "org.mockito:mockito-all:$mockitoVersion"
 	testCompile "org.springframework.integration:spring-integration-test:$springIntegrationVersion"
 	testCompile "junit:junit-dep:$junitVersion"

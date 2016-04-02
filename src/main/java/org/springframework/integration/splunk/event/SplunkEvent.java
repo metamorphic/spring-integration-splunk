@@ -96,7 +96,6 @@ public class SplunkEvent implements Serializable {
 	 * @param eventName the event name
 	 * @param eventID the event id
 	 * @param useInternalDate whether or not to add a date to the event string
-	 * @param quoteValues whether or not to put quotes around values
 	 */
 	public SplunkEvent(String eventName, String eventID, boolean useInternalDate) {
 
@@ -247,7 +246,7 @@ public class SplunkEvent implements Serializable {
 	 */
 	public void addPair(String key, String value) {
 		Assert.notNull(key, "key cannot be null");
-		
+
 		//start json
 		if (this.eventMessage.length() == 0){
 			this.eventMessage.append("{");
@@ -270,15 +269,15 @@ public class SplunkEvent implements Serializable {
 		String event = "";
 
 		if (useInternalDate) {
-			addPair("timestamp",DATE_FORMATTER.print(new Date().getTime()));			
-		} 
-		
+			addPair("timestamp",DATE_FORMATTER.print(new Date().getTime()));
+		}
+
 		//end json
 		if (this.eventMessage.length() != 0){
 		  eventMessage.append("}");
 		}
 		event = eventMessage.toString();
-	
+
 		return event;
 	}
 
