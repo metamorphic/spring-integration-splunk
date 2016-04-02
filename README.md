@@ -3,6 +3,10 @@ Spring Integration Splunk Adapter
 
 The SI adapter includes Outbound Channel Adapter and Inbound Channel Adapter.
 
+### Updates
+
+* The dispatch.earliest_time parameter for saved searches must be in epoch time format
+
 Inbound channel adapter :
 -----------------------------------------------------------------------------
 The Inbound channel adapter is used to read data from Splunk and output a message containing the data to a Spring Integration channel. There are 5 ways to get data from Splunk:

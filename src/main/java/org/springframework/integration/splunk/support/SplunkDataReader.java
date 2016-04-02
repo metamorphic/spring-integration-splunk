@@ -179,6 +179,7 @@ public class SplunkDataReader implements DataReader, InitializingBean {
 
 	public List<SplunkEvent> read() throws Exception {
 		logger.debug("mode:" + this.mode);
+    // System.out.println(">>mode:" + this.mode);
 		switch (this.mode) {
 		case SAVEDSEARCH: {
 			return savedSearch();
@@ -215,8 +216,10 @@ public class SplunkDataReader implements DataReader, InitializingBean {
 		if (realtime) {
 			result = calculateEarliestTimeForRealTime(startTime);
 		}
-		DateFormat df = new SimpleDateFormat(DATE_FORMAT);
-		result = df.format(this.lastSuccessfulReadTime.getTime());
+		// must use epoch time
+		// DateFormat df = new SimpleDateFormat(DATE_FORMAT);
+		// result = df.format(this.lastSuccessfulReadTime.getTime());
+		result = String.valueOf(this.lastSuccessfulReadTime.getTimeInMillis() / 1000L);
 		return result;
 	}
 
@@ -383,6 +386,8 @@ public class SplunkDataReader implements DataReader, InitializingBean {
 			Job job = null;
 			String latestTime = getLatestTime(startTime, false);
 			String earliestTime = getEarliestTime(startTime, false);
+      logger.info(">>earliestTime: " + earliestTime);
+      // System.out.println(">>earliestTime: " + earliestTime);
 
 			Service service = this.serviceFactory.getService();
 			SavedSearchCollection savedSearches = service.getSavedSearches(queryArgs);
