@@ -81,7 +81,7 @@ The Outbound channel adapter is used to write data to Splunk from a Spring Integ
 * submit - Use's Splunk's REST API. Appropriate for small or infrequent data loads. Posts data to a named index or the default if not specified.
 * index - Streams data to a named index or the default if not specified.
 * tcp - Streams data to a tcp port associated with a defined tcp input.
-* hec - Sends data to Splunk using the high performannce HTTP Event Collector
+* hec - Sends data to Splunk using the high performance HTTP Event Collector
 
 It is strongly recommended that you use the "hec" adaptor. The other 3 are legacy implementations.
 

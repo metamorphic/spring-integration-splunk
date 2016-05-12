@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.splunk.Args;
 import com.splunk.Job;
@@ -89,6 +90,8 @@ public class SplunkDataReader implements DataReader, InitializingBean {
 	private transient Calendar lastSuccessfulReadTime;
 
 	private final ServiceFactory serviceFactory;
+
+	private AtomicInteger i = new AtomicInteger(24);
 
 	public SplunkDataReader(ServiceFactory serviceFactory) {
 		this.serviceFactory = serviceFactory;
@@ -255,40 +258,42 @@ public class SplunkDataReader implements DataReader, InitializingBean {
 	}
 
 	private String getLatestTime(Calendar startTime, boolean realtime) {
-		String lTime = null;
-		if (StringUtils.hasText(this.latestTime)) {
-			lTime = this.latestTime;
-		} else {
-			if (realtime) {
-				lTime = "rt";
-			} else {
-				DateFormat df = new SimpleDateFormat(DATE_FORMAT);
-				lTime = df.format(startTime.getTime());
-			}
-		}
-		return lTime;
+		return "@d-" + i.decrementAndGet() + "h";
+//		String lTime = null;
+//		if (StringUtils.hasText(this.latestTime)) {
+//			lTime = this.latestTime;
+//		} else {
+//			if (realtime) {
+//				lTime = "rt";
+//			} else {
+//				DateFormat df = new SimpleDateFormat(DATE_FORMAT);
+//				lTime = df.format(startTime.getTime());
+//			}
+//		}
+//		return lTime;
 	}
 
 	private String getEarliestTime(Calendar startTime, boolean realtime) {
-		String eTime = null;
-
-		if (this.lastSuccessfulReadTime == null) {
-			eTime = this.initEarliestTime;
-		} else {
-			if (StringUtils.hasText(earliestTime)) {
-				eTime = this.earliestTime;
-			} else {
-				String calculatedEarliestTime = calculateEarliestTime(startTime, realtime);
-				if (calculatedEarliestTime != null) {
-					if (realtime) {
-						eTime = "rt" + calculatedEarliestTime;
-					} else {
-						eTime = calculatedEarliestTime;
-					}
-				}
-			}
-		}
-		return eTime;
+		return "@d-" + i.get() + "h";
+//		String eTime = null;
+//
+//		if (this.lastSuccessfulReadTime == null) {
+//			eTime = this.initEarliestTime;
+//		} else {
+//			if (StringUtils.hasText(earliestTime)) {
+//				eTime = this.earliestTime;
+//			} else {
+//				String calculatedEarliestTime = calculateEarliestTime(startTime, realtime);
+//				if (calculatedEarliestTime != null) {
+//					if (realtime) {
+//						eTime = "rt" + calculatedEarliestTime;
+//					} else {
+//						eTime = calculatedEarliestTime;
+//					}
+//				}
+//			}
+//		}
+//		return eTime;
 	}
 
 	private List<SplunkEvent> runQuery(Args queryArgs) throws Exception {
@@ -350,6 +355,11 @@ public class SplunkDataReader implements DataReader, InitializingBean {
 	private List<SplunkEvent> exportSearch() throws Exception {
 		logger.debug("export start");
 		List<SplunkEvent> result = new ArrayList<SplunkEvent>();
+
+		if (i.get() == 0) {
+			return result;
+		}
+
 		HashMap<String, String> data;
 		SplunkEvent splunkData;
 
@@ -357,6 +367,8 @@ public class SplunkDataReader implements DataReader, InitializingBean {
 		Calendar startTime = Calendar.getInstance();
 		populateArgs(queryArgs, startTime, false);
 		queryArgs.put("output_mode", "xml");
+
+		logger.info("!export Search: " + this.search + " " + queryArgs.encode());
 
 		Service service = this.serviceFactory.getService();
 		InputStream os = service.export(this.search, queryArgs);
