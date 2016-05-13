@@ -97,6 +97,10 @@ public class SplunkDataReader implements DataReader, InitializingBean {
 		this.serviceFactory = serviceFactory;
 	}
 
+	public void setStartCount(int startCount) {
+		i.set(startCount);
+	}
+
 	public void setSearch(String searchStr) {
 		Assert.hasText(searchStr, "search must be neither null nor empty");
 		this.search = searchStr;
