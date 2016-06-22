@@ -19,11 +19,7 @@ package org.springframework.integration.splunk.support;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.splunk.Args;
@@ -92,6 +88,7 @@ public class SplunkDataReader implements DataReader, InitializingBean {
 	private final ServiceFactory serviceFactory;
 
 	private AtomicInteger i = new AtomicInteger(24);
+	private int currentDate = 0;
 
 	public SplunkDataReader(ServiceFactory serviceFactory) {
 		this.serviceFactory = serviceFactory;
@@ -261,7 +258,11 @@ public class SplunkDataReader implements DataReader, InitializingBean {
 		}
 	}
 
+	// called second
 	private String getLatestTime(Calendar startTime, boolean realtime) {
+		if (latestTime != null && !latestTime.isEmpty()) {
+			return latestTime;
+		}
 		return "@d-" + i.decrementAndGet() + "h";
 //		String lTime = null;
 //		if (StringUtils.hasText(this.latestTime)) {
@@ -278,6 +279,15 @@ public class SplunkDataReader implements DataReader, InitializingBean {
 	}
 
 	private String getEarliestTime(Calendar startTime, boolean realtime) {
+		if (earliestTime != null && !earliestTime.isEmpty()) {
+			return earliestTime;
+		}
+		Date now = new Date();
+		int date = now.getYear() + now.getMonth() + now.getDate();
+		if (date > currentDate) {
+			currentDate = date;
+			i.set(24);
+		}
 		return "@d-" + i.get() + "h";
 //		String eTime = null;
 //
